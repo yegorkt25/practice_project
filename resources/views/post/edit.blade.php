@@ -1,5 +1,5 @@
 <x-app-layout>
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="text-center m-4 font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Edit post') }}
         </h2>
     {{--    --}}
