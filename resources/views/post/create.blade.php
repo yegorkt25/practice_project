@@ -4,7 +4,6 @@
             {{ __('Create post') }}
         </h2>
     </x-slot>
-{{--    --}}
     <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg m-auto">
         <form method="POST" action="{{ route('post.store') }}">
             @csrf
@@ -19,7 +18,7 @@
             <div class="mt-4">
                 <x-input-label for="text" :value="__('Text')" />
 
-                <x-text-area id="text" name="text"/>
+                <x-text-area id="text" name="text" value=""/>
             </div>
 
             <div class="flex items-center justify-center mt-4">

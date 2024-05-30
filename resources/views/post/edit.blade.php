@@ -10,14 +10,14 @@
             <!-- Title of the post -->
             <div>
                 <x-input-label for="title" :value="__('Post title')" />
-                <x-text-input id="title" class="block mt-1 w-full" name="title" :value="old('title')" required autofocus/>
+                <x-text-input id="title" class="block mt-1 w-full" name="title" :value="old('title')" value="{{$post['title']}}" required autofocus/>
             </div>
 
             <!-- Post text -->
             <div class="mt-4">
                 <x-input-label for="text" :value="__('Text')" />
 
-                <x-text-area id="text" name="text"/>
+                <x-text-area value="{{$post['text']}}" id="text" name="text"/>
             </div>
 
             <div class="flex items-center justify-center mt-4">
