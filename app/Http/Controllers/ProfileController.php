@@ -17,15 +17,29 @@ class ProfileController extends Controller
 
     public function index(Request $request): View
     {
-        return view('profile.index', ['user' => Auth::user()]);
+        $posts = Post::query()->
+        where('user_id', request()->user()->id)->
+        orderBy('created_at', 'desc')->
+        get();
+        return view('profile.index', ['user' => Auth::user()], ['posts' => $posts]);
     }
 
     public function show(User $user): View {
-        if ($user->id == Auth::id()) {
-            return view('profile.index', ['user' => Auth::user()]);
-//            return to_route('profile.index', ['user' => Auth::user()]);
-        }
-        return view('profile.show', compact('user'));
+
+        $posts = Post::query()->
+        where('user_id', $user->id)->
+        orderBy('created_at', 'desc')->
+        get();
+
+
+//        if ($user->id == Auth::id()) {
+//            return view('profile.index', ['user' => Auth::user()], ['posts' => $posts]);
+////            return to_route('profile.index', ['user' => Auth::user()]);
+//        }
+
+
+
+        return view('profile.show', compact('user'), compact('posts'));
     }
 
     /**
