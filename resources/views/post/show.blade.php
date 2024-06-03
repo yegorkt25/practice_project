@@ -1,7 +1,7 @@
 <x-app-layout>
 {{--//\App\Models\User::query()->where('id', $post['user_id'])->get()--}}
     <div class="w-2/4 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 p-12">
-        <a href="{{route('profile.show', $post['user_id'])}}" class="mb-6 hover:opacity-80">{{\App\Models\User::query()->where('id', $post['user_id'])->get()[0]['email']}}</a>
+        <a href="{{route('profile.show', $post['user_id'])}}" class="mb-6 hover:opacity-80">{{\App\Models\User::query()->where('id', $post['user_id'])->get()[0]['name']}}</a>
         <h2 class="mb-4 font-semibold text-xl text-gray-800 leading-tight">{{$post['title']}}</h2>
         <p class="mb-6">{{$post['text']}}</p>
 

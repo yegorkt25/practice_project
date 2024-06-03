@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
@@ -14,10 +15,21 @@ class PostController extends Controller
      */
     public function index()
     {
-        $posts = Post::query()->
-            where('user_id', request()->user()->id)->
-            orderBy('created_at', 'desc')->
-            get();
+        $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
+
+        $posts = [];
+
+//        foreach ($following as $follow) {
+//            $posts[] = array_merge($posts, $posts = Post::query()->
+//                where('user_id', $follow->follower_id)->
+//                orderBy('created_at', 'desc')->
+//                get());
+//        }
+
+//        $posts = Post::query()->
+//            where('user_id', request()->user()->id)->
+//            orderBy('created_at', 'desc')->
+//            get();
         return view('post.index', compact('posts'));
     }
 

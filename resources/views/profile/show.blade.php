@@ -35,10 +35,35 @@
                             <p class="mt-1 block w-full">{{$user->created_at}}</p>
 
                         </div>
+
+                        <div>
+                            <x-input-label for="email" :value="__('Followers')" class="inline"/>
+                            <p class="mt-1 inline mr-4">{{count($followers)}}</p>
+
+                            <x-input-label for="email" :value="__('Following')" class="inline"/>
+                            <p class="mt-1 inline">{{count($following)}}</p>
+                        </div>
+
+                        @if($user->id != auth()->id())
+                            @if(!$is_followed)
+                                <form action="{{route('profile.follow', $user->id)}}">
+                                    <x-primary-button class="ms-3">
+                                        {{ __('Follow') }}
+                                    </x-primary-button>
+                                </form>
+                            @else
+                                <form action="{{route('profile.unfollow', $user->id)}}">
+                                    <x-primary-button class="ms-3">
+                                        {{ __('Unfollow') }}
+                                    </x-primary-button>
+                                </form>
+                            @endif
+
+
+
+                        @endif
                     </div>
-
                 </section>
-
             </div>
         </div>
 

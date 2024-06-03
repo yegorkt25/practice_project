@@ -8,20 +8,50 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-
-    public function index(Request $request): View
+    public function follow(int $followedUserId): RedirectResponse
     {
-        $posts = Post::query()->
-        where('user_id', request()->user()->id)->
-        orderBy('created_at', 'desc')->
-        get();
-        return view('profile.index', ['user' => Auth::user()], ['posts' => $posts]);
+        $followers = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
+
+        $followersIds = [];
+
+        foreach ($followers as $follower) {
+            $followersIds[] = $follower->follower_id;
+        }
+
+//        Log::debug(print_r($followersIds, true));
+
+        if (!in_array($followedUserId, $followersIds)) {
+            DB::table('user_followers')->insert([
+                'user_id' => $followedUserId,
+                'follower_id' => request()->user()->id,
+            ]);
+            return Redirect::back();
+        }
+        return Redirect::back();
+    }
+
+    public function unfollow(int $followedUserId): RedirectResponse
+    {
+        $followers = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
+
+        $followersIds = [];
+
+        foreach ($followers as $follower) {
+            $followersIds[] = $follower->follower_id;
+        }
+
+        if (in_array($followedUserId, $followersIds)) {
+            DB::table('user_followers')->where('user_id', request()->user()->id)->where('follower_id', $followedUserId)->delete();
+            return Redirect::back();
+        }
+        return Redirect::back();
     }
 
     public function show(User $user): View {
@@ -30,16 +60,21 @@ class ProfileController extends Controller
         where('user_id', $user->id)->
         orderBy('created_at', 'desc')->
         get();
+        $followers = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
+        $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
 
+        $followersIds = [];
 
-//        if ($user->id == Auth::id()) {
-//            return view('profile.index', ['user' => Auth::user()], ['posts' => $posts]);
-////            return to_route('profile.index', ['user' => Auth::user()]);
-//        }
+        foreach ($followers as $follower) {
+            $followersIds[] = $follower->follower_id;
+        }
 
-
-
-        return view('profile.show', compact('user'), compact('posts'));
+        if (auth()->id() != $user->id) {
+            if (in_array($user->id, $followersIds)) {
+                return view('profile.show', ['user' => $user, 'posts' => $posts, 'is_followed' => true, 'followers' => $followers, 'following' => $following]);
+            }
+        }
+        return view('profile.show', ['user' => $user, 'posts' => $posts, 'is_followed' => false, 'followers' => $followers, 'following' => $following]);
     }
 
     /**
@@ -47,11 +82,9 @@ class ProfileController extends Controller
      */
     public function edit(Request $request)
     {
-//        Log::debug($request->user());      : View
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
-//        return 'hui';
     }
 
     /**
