@@ -17,17 +17,16 @@ class ProfileController extends Controller
 {
     public function follow(int $followedUserId): RedirectResponse
     {
-        $followers = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
+        $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
+//        Log::debug("FOLLOW");
+        $followingIds = [];
 
-        $followersIds = [];
-
-        foreach ($followers as $follower) {
-            $followersIds[] = $follower->follower_id;
+        foreach ($following as $follower) {
+            $followingIds[] = $follower->user_id;
         }
 
-//        Log::debug(print_r($followersIds, true));
 
-        if (!in_array($followedUserId, $followersIds)) {
+        if (!in_array($followedUserId, $followingIds)) {
             DB::table('user_followers')->insert([
                 'user_id' => $followedUserId,
                 'follower_id' => request()->user()->id,
@@ -39,16 +38,18 @@ class ProfileController extends Controller
 
     public function unfollow(int $followedUserId): RedirectResponse
     {
-        $followers = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
+        $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
+        $followingIds = [];
 
-        $followersIds = [];
-
-        foreach ($followers as $follower) {
-            $followersIds[] = $follower->follower_id;
+        foreach ($following as $follower) {
+            $followingIds[] = $follower->user_id;
         }
+//        Log::debug($followingIds);
 
-        if (in_array($followedUserId, $followersIds)) {
-            DB::table('user_followers')->where('user_id', request()->user()->id)->where('follower_id', $followedUserId)->delete();
+
+        if (in_array($followedUserId, $followingIds)) {
+            Log::debug('ASDASDASD');
+            DB::table('user_followers')->where('follower_id', request()->user()->id)->where('user_id', $followedUserId)->delete();
             return Redirect::back();
         }
         return Redirect::back();
@@ -60,16 +61,18 @@ class ProfileController extends Controller
         where('user_id', $user->id)->
         orderBy('created_at', 'desc')->
         get();
-        $followers = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
-        $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
+        $followers = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
+        $following = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
 
         $followersIds = [];
 
         foreach ($followers as $follower) {
-            $followersIds[] = $follower->follower_id;
+            $followersIds[] = $follower->user_id;
         }
 
         if (auth()->id() != $user->id) {
+            Log::debug(print_r($followersIds, true));
+
             if (in_array($user->id, $followersIds)) {
                 return view('profile.show', ['user' => $user, 'posts' => $posts, 'is_followed' => true, 'followers' => $followers, 'following' => $following]);
             }

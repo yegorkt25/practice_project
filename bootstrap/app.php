@@ -15,5 +15,4 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        Log::debug('SYKAAAAA PIDOR');
     })->create();

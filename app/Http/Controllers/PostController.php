@@ -6,7 +6,6 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -17,19 +16,16 @@ class PostController extends Controller
     {
         $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
 
-        $posts = [];
+        $following_ids = [];
 
-//        foreach ($following as $follow) {
-//            $posts[] = array_merge($posts, $posts = Post::query()->
-//                where('user_id', $follow->follower_id)->
-//                orderBy('created_at', 'desc')->
-//                get());
-//        }
+        foreach ($following as $follow) {
+            $following_ids[] = $follow->user_id;
+        }
 
-//        $posts = Post::query()->
-//            where('user_id', request()->user()->id)->
-//            orderBy('created_at', 'desc')->
-//            get();
+        $following_ids[] = request()->user()->id;
+
+        $posts = Post::query()->whereIn('user_id', $following_ids)->orderBy('created_at', 'desc')->get();
+
         return view('post.index', compact('posts'));
     }
 
@@ -53,8 +49,6 @@ class PostController extends Controller
         ]);
 
         $data['user_id'] = $request->user()->id;
-
-        Log::debug($data);
 
         $post = Post::create($data);
 
@@ -82,8 +76,6 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        Log::debug($request);
-
         $data = $request->validate([
             'title' => 'required|max:255',
             'text' => 'required|max:255',
@@ -100,7 +92,6 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-//        Log::debug($post);
         $post->delete();
         return to_route('post.index');
     }
