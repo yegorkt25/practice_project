@@ -25,6 +25,14 @@
 
             </div>
 
+            <div class="search-bar m-auto">
+                <form action="{{route('profile.search')}}" method="get">
+                    @csrf
+                    <x-text-input class="mt-2 rounded-3xl w-64" id="name" name="name"/>
+                    <x-primary-button class="ms-3 rounded-2xl"> {{ __('Search') }} </x-primary-button>
+                </form>
+            </div>
+
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right" width="48">

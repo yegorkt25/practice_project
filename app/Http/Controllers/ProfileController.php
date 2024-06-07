@@ -18,7 +18,6 @@ class ProfileController extends Controller
     public function follow(int $followedUserId): RedirectResponse
     {
         $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
-//        Log::debug("FOLLOW");
         $followingIds = [];
 
         foreach ($following as $follower) {
@@ -48,11 +47,36 @@ class ProfileController extends Controller
 
 
         if (in_array($followedUserId, $followingIds)) {
-            Log::debug('ASDASDASD');
             DB::table('user_followers')->where('follower_id', request()->user()->id)->where('user_id', $followedUserId)->delete();
             return Redirect::back();
         }
         return Redirect::back();
+    }
+
+    public function followers(User $user): View
+    {
+        $following = DB::table('user_followers')->select('follower_id')->where('user_id', request()->user()->id)->get();
+        $followingIds = [];
+
+        foreach ($following as $follower) {
+            $followingIds[] = $follower->follower_id;
+        }
+        $users = User::query()->whereIn('id', $followingIds)->get();
+
+        return view('profile.list', ['users' => $users]);
+    }
+
+    public function following(User $user): View
+    {
+        $following = DB::table('user_followers')->select('user_id')->where('follower_id', request()->user()->id)->get();
+        $followingIds = [];
+
+        foreach ($following as $follower) {
+            $followingIds[] = $follower->user_id;
+        }
+        $users = User::query()->whereIn('id', $followingIds)->get();
+
+        return view('profile.list', ['users' => $users]);
     }
 
     public function show(User $user): View {
@@ -78,6 +102,13 @@ class ProfileController extends Controller
             }
         }
         return view('profile.show', ['user' => $user, 'posts' => $posts, 'is_followed' => false, 'followers' => $followers, 'following' => $following]);
+    }
+
+    public function search(Request $request): View
+    {
+        $username = $request->get('name');
+        $users = User::query()->where('name', 'like', '%' . $username . '%')->orderBy('created_at', 'desc')->get();
+        return view('profile.list', ['users' => $users]);
     }
 
     /**

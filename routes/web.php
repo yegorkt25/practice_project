@@ -17,9 +17,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/profile/{user}/follow', [ProfileController::class, 'follow'])->name('profile.follow');
     Route::get('/profile/{user}/unfollow', [ProfileController::class, 'unfollow'])->name('profile.unfollow');
+    Route::get('/profile/{user}/followers', [ProfileController::class, 'followers'])->name('profile.followers');
+    Route::get('/profile/{user}/following', [ProfileController::class, 'following'])->name('profile.following');
+    Route::get('/search/{text?}', [ProfileController::class, 'search'])->name('profile.search');
     Route::get('/profile/{user}', [ProfileController::class, 'show'])->name('profile.show');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('post/{post}/like', [PostController::class, 'like'])->name('post.like');
+    Route::post('post/{post}/unlike', [PostController::class, 'unlike'])->name('post.unlike');
 });
 
 Route::resource('post', PostController::class)->middleware(['auth', 'verified']);

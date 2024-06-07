@@ -37,11 +37,11 @@
                         </div>
 
                         <div>
-                            <x-input-label for="email" :value="__('Followers')" class="inline"/>
-                            <p class="mt-1 inline mr-4">{{count($followers)}}</p>
+                            <a href="{{route('profile.followers', $user)}}" class="hover:opacity-80"> <x-input-label for="email" :value="__('Followers')" class="inline"/> </a>
+                            <p class="mt-1 inline mr-4">{{count($following)}}</p>
 
-                            <x-input-label for="email" :value="__('Following')" class="inline"/>
-                            <p class="mt-1 inline">{{count($following)}}</p>
+                            <a href="{{route('profile.following', $user)}}" class="hover:opacity-80"> <x-input-label for="email" :value="__('Following')" class="inline"/> </a>
+                            <p class="mt-1 inline">{{count($followers)}}</p>
                         </div>
 
                         @if($user->id != auth()->id())

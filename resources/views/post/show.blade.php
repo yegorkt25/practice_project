@@ -24,6 +24,23 @@
             @endif
 
         </div>
+        <br>
+
+        @if($liked)
+            <form action="{{route('post.unlike', $post)}}" method="POST" class="flex mt-3">
+                @csrf
+                <a href="#" onclick="this.closest('form').submit();return false;">
+                    <img src="{{URL::asset('/img/like.png')}}" alt="like" class="w-5">
+                </a> <p class="ml-2">{{count($likes)}}</p>
+            </form>
+        @else
+            <form action="{{route('post.like', $post)}}" method="POST" class="flex mt-3">
+                @csrf
+                <a href="#" onclick="this.closest('form').submit();return false;">
+                    <img src="{{URL::asset('/img/like.png')}}" alt="like" class="w-5">
+                </a> <p class="ml-2">{{count($likes)}}</p>
+            </form>
+        @endif
 
 
     </div>
